@@ -48,3 +48,16 @@ daysInMonth m y = case m of
     11 -> 30
     2 -> if leap y then 29 else 28
     _   -> 31
+
+sundays2 :: Integer -> Integer -> Integer
+sundays2 start end = sundays' start 1 2
+  where
+    sundays' :: Integer -> Integer -> Integer -> Integer
+    sundays' y m wd
+      | y > end = 0
+      | otherwise = if wd' `mod` 7  == 0 then rest + 1 else rest
+      where
+        wd' = wd + ((daysInMonth m y) `mod` 7)
+        nextY = if m == 12 then y + 1 else y
+        nextM = if m < 12 then m + 1 else 1
+        rest = sundays' nextY nextM wd'
