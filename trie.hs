@@ -8,9 +8,11 @@ import Prelude hiding (Word)
 data Trie = Trie {end :: Bool, children :: Map Char Trie} deriving (Show)
 type Word = String
 
+--Creates an empty trie
 empty :: Trie
 empty = Trie {end = False, children = Map.empty}
 
+--Inserts a given word to a given trie
 insert :: Word -> Trie -> Trie
 insert [] tree = tree { end = True }
 insert (x:xs) tree = let treeChild = children tree
@@ -18,9 +20,11 @@ insert (x:xs) tree = let treeChild = children tree
         Nothing -> tree {children = Map.insert x (insert xs empty) treeChild}
         Just tree' -> tree {children = Map.insert x (insert xs tree') treeChild}
 
+--Takes list of words and returns them as a trie
 insertList :: [Word] -> Trie
 insertList = foldr insert empty
 
+--Checks whether a given word exists in a given Trie
 search :: Word -> Trie -> Bool
 search [] (Trie e _) = e
 search (x:xs) (Trie _ child) = fromMaybe False (fmap (search xs) (Map.lookup x child))
@@ -31,24 +35,35 @@ getWords = undefined
 prefix :: Word -> Trie -> Maybe [Word]
 prefix = undefined
 
-addWord :: IO String
-addWord = do
-    getWord
+--Takes a Trie, reads a word from user, adds that word to the Trie
+addWord :: Trie -> IO ()
+addWord tree = do
+    putStrLn "Enter word/prefix:"
+    line <- getLine
+    let newTree = insert line tree
+    --Uncomment next line to see that word was successfully inserted into the Trie
+    --print newTree
+    putStrLn "New word is added!"    
 
-searchWord :: IO String
-searchWord = do
-    getWord
+--Takes a Trie, reads a word from user, searches that word in the Trie
+searchWord :: Trie -> IO ()
+searchWord tree = do
+    putStrLn "Enter word/prefix:"
+    line <- getLine
+    let outcome = search line tree
+    if outcome == True 
+        then putStrLn "Exist in dictionary!"
+        else putStrLn "NOT exist!"
 
-findWord :: IO String
-findWord = do
-    getWord
+findWord :: Trie -> IO ()
+findWord = undefined
 
-printAllWords :: IO String
-printAllWords = do
-    getWord
+printAllWords :: Trie -> IO ()
+printAllWords = undefined
 
-printMenu :: IO String
-printMenu = do
+--Helper function to get action from user
+printMenu :: Trie -> IO ()
+printMenu tree = do
     putStrLn "a) Add Word"
     putStrLn "s) Search Word"
     putStrLn "f) Find words with prefix"
@@ -58,23 +73,19 @@ printMenu = do
     character <- getChar
 
     case character of
-        'a' -> addWord
-        's' -> searchWord
-        'f' -> findWord
-        'p' -> printAllWords 
-        'e' -> return "Exit"
-        _ -> return "Wrong action, please try again!"
+        'a' -> addWord tree
+        's' -> searchWord tree
+        'f' -> findWord tree
+        'p' -> printAllWords tree
+        'e' -> return ()
+        _ -> return ()
 
-getWord :: IO String
-getWord = do
-    putStrLn "Enter word/prefix:"
-    line <- getLine
-    return line
-
-main :: IO String
+main :: IO ()
 main = do
     [arg] <- getArgs
     content <- readFile arg
     let separatedLines = lines content
     let a = insertList separatedLines
-    printMenu
+    --Uncomment next line to see that words.txt was successfully inserted into a Trie
+    --print a
+    printMenu a
