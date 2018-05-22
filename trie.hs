@@ -1,6 +1,6 @@
 import Data.Map (Map)
 import qualified Data.Map as Map
-import Data.Maybe
+import Data.Maybe (fromMaybe)
 import System.Environment
 import System.IO
 import Prelude hiding (Word)
@@ -12,7 +12,8 @@ empty :: Trie
 empty = Trie {end = False, children = Map.empty}
 
 insert :: Word -> Trie -> Trie
-insert = undefined
+insert [] tree = tree { end = True }
+insert (x:xs) tree = tree {children = Map.alter ( \l -> Just(insert xs (fromMaybe empty l))) x $ children tree}
 
 insertList :: [Word] -> Trie
 insertList = foldr insert empty
