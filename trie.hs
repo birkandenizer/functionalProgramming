@@ -36,14 +36,15 @@ prefix :: Word -> Trie -> Maybe [Word]
 prefix = undefined
 
 --Takes a Trie, reads a word from user, adds that word to the Trie
-addWord :: Trie -> IO ()
+addWord :: Trie -> IO Trie
 addWord tree = do
     putStrLn "Enter word/prefix:"
     line <- getLine
     let newTree = insert line tree
     --Uncomment next line to see that word was successfully inserted into the Trie
     --print newTree
-    putStrLn "New word is added!"    
+    putStrLn "New word is added!"
+    return newTree
 
 --Takes a Trie, reads a word from user, searches that word in the Trie
 searchWord :: Trie -> IO ()
@@ -64,21 +65,22 @@ printAllWords = undefined
 --Helper function to get action from user
 printMenu :: Trie -> IO ()
 printMenu tree = do
+    putStrLn ""
     putStrLn "a) Add Word"
     putStrLn "s) Search Word"
     putStrLn "f) Find words with prefix"
     putStrLn "p) Print all words"
     putStrLn "e) Exit"
     putStrLn "Enter the action:"
-    character <- getChar
+    [character] <- getLine
 
     case character of
-        'a' -> addWord tree
-        's' -> searchWord tree
-        'f' -> findWord tree
-        'p' -> printAllWords tree
+        'a' -> do {tree' <- addWord tree; printMenu tree'}
+        's' -> do {searchWord tree; printMenu tree}
+        'f' -> do {findWord tree; printMenu tree}
+        'p' -> do {printAllWords tree; printMenu tree}
         'e' -> return ()
-        _ -> return ()
+        _ -> do {putStrLn "Invalid action!"; printMenu tree}
 
 main :: IO ()
 main = do
