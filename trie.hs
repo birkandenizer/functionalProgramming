@@ -13,7 +13,10 @@ empty = Trie {end = False, children = Map.empty}
 
 insert :: Word -> Trie -> Trie
 insert [] tree = tree { end = True }
-insert (x:xs) tree = tree {children = Map.alter ( \l -> Just(insert xs (fromMaybe empty l))) x $ children tree}
+insert (x:xs) tree = let treeChild = children tree
+    in case Map.lookup x treeChild of
+        Nothing -> tree {children = Map.insert x (insert xs empty) treeChild}
+        Just tree' -> tree {children = Map.insert x (insert xs tree') treeChild}
 
 insertList :: [Word] -> Trie
 insertList = foldr insert empty
