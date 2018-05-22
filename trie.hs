@@ -5,23 +5,23 @@ import System.Environment
 import System.IO
 import Prelude hiding (Word)
 
-data Trie = Trie {end :: Bool, children :: Map Char Trie}
-type Word = String 
+data Trie = Trie {end :: Bool, children :: Map Char Trie} deriving (Show)
+type Word = String
 
 empty :: Trie
-empty = undefined
+empty = Trie {end = False, children = Map.empty}
 
-insert :: Word -> Trie -> Trie 
+insert :: Word -> Trie -> Trie
 insert = undefined
 
-insertList :: [Word] -> Trie 
-insertList = undefined
+insertList :: [Word] -> Trie
+insertList = foldr insert empty
 
-search :: Word -> Trie -> Bool 
+search :: Word -> Trie -> Bool
 search = undefined
 
-getWords :: Trie -> [Word] 
+getWords :: Trie -> [Word]
 getWords = undefined
 
-prefix :: Word -> Trie -> Maybe [Word] 
+prefix :: Word -> Trie -> Maybe [Word]
 prefix = undefined
