@@ -19,7 +19,8 @@ insertList :: [Word] -> Trie
 insertList = foldr insert empty
 
 search :: Word -> Trie -> Bool
-search = undefined
+search [] (Trie e _) = e
+search (x:xs) (Trie _ child) = fromMaybe False (fmap (search xs) (Map.lookup x child))
 
 getWords :: Trie -> [Word]
 getWords = undefined
