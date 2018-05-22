@@ -24,29 +24,31 @@ insert (x:xs) tree = let treeChild = children tree
 insertList :: [Word] -> Trie
 insertList = foldr insert empty
 
---Checks whether a given word exists in a given Trie
+--Checks whether a given word exists in a given trie
 search :: Word -> Trie -> Bool
 search [] (Trie e _) = e
 search (x:xs) (Trie _ child) = fromMaybe False (fmap (search xs) (Map.lookup x child))
 
+--Takes a trie, unfolds it to the words
 getWords :: Trie -> [Word]
-getWords = undefined
+getWords (Trie e child) = if e then "": unfold else unfold
+    where unfold = [char:word | (char, trie) <- Map.toList child, word <- getWords trie]
 
 prefix :: Word -> Trie -> Maybe [Word]
 prefix = undefined
 
---Takes a Trie, reads a word from user, adds that word to the Trie
+--Takes a trie, reads a word from user, adds that word to the trie
 addWord :: Trie -> IO Trie
 addWord tree = do
     putStrLn "Enter word/prefix:"
     line <- getLine
     let newTree = insert line tree
-    --Uncomment next line to see that word was successfully inserted into the Trie
+    --Uncomment next line to see that word was successfully inserted into the trie
     --print newTree
     putStrLn "New word is added!"
     return newTree
 
---Takes a Trie, reads a word from user, searches that word in the Trie
+--Takes a trie, reads a word from user, searches that word in the trie
 searchWord :: Trie -> IO ()
 searchWord tree = do
     putStrLn "Enter word/prefix:"
@@ -59,8 +61,11 @@ searchWord tree = do
 findWord :: Trie -> IO ()
 findWord = undefined
 
+--Takes a trie, gets the list of words, prints it
 printAllWords :: Trie -> IO ()
-printAllWords = undefined
+printAllWords tree = do
+    putStrLn "List of words in dictionary:"
+    putStr (unlines $ getWords tree)
 
 --Helper function to get action from user
 printMenu :: Trie -> IO ()
